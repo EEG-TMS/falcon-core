@@ -29,7 +29,7 @@ echo "Installing Falcon $LATEST_VERSION, please wait..."
 
 mkdir -p "$BASE_DIR"
 
-wget -qL "$RELEASE_BUNDLE_URL" -O "$BASE_DIR/falcon_bundle.tar.gz"
+wget -q "$RELEASE_BUNDLE_URL" -O "$BASE_DIR/falcon_bundle.tar.gz"
 tar -xzf "$BASE_DIR/falcon_bundle.tar.gz" -C "$BASE_DIR" --strip-components=1
 rm "$BASE_DIR/falcon_bundle.tar.gz"
 
