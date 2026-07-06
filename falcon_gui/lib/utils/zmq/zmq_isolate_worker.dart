@@ -132,7 +132,8 @@ class ZMQIsolateWorker {
             context ??= zmq!.ctxNew();
 
             logInfo('libzmq version: ${zmq!.version()}');
-            final socket = zmq!.socket(context!, message['socketType'] as int);
+            final zmqSocketType = message['socketType'] as int;
+            final socket = zmq!.socket(context!, zmqSocketType);
 
             if (message['receiveTimeout'] != null) {
               zmq!.setSocketOption(
@@ -140,6 +141,12 @@ class ZMQIsolateWorker {
                 ZMQ_RCVTIMEO,
                 message['receiveTimeout'] as int,
               );
+            }
+
+            final socketType = message['socketType'] as int;
+            if (socketType == ZMQ_REQ) {
+              zmq!.setSocketOption(socket, ZMQ_REQ_RELAXED, 1);
+              zmq!.setSocketOption(socket, ZMQ_REQ_CORRELATE, 1);
             }
 
             zmq!.connect(socket, message['endpoint'] as String);
@@ -215,10 +222,10 @@ class ZMQIsolateWorker {
         logInfo('Subscribed to all topics on ${data.config.endpoint}');
       }
     }
-
     while (true) {
       try {
         final result = zmq.recvMultipartStringsSync(socket);
+
         data.sendPort.send({
           'id': data.id,
           'stream': true,
@@ -232,12 +239,9 @@ class ZMQIsolateWorker {
             'stream': true,
             'error': e.toString(),
           });
-          break;
         }
       }
     }
-
-    data.sendPort.send({'id': data.id, 'stream': true, 'done': true});
   }
 }
 

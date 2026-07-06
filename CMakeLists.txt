@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 # Prevents re-downloading dependencies every time the build folder is deleted
-set(FETCHCONTENT_BASE_DIR "${CMAKE_HOME_DIRECTORY}/cmake_cache" CACHE PATH "")
+set(FETCHCONTENT_BASE_DIR "${CMAKE_HOME_DIRECTORY}/.cache" CACHE PATH "")
 
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -17,7 +17,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wextra -Wunused -pthread")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
 	message(STATUS "Profile build")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -fno-omit-frame-pointer -fno-inline-functions -Wall -Wextra -Wunused -pthread")
+   	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -fno-omit-frame-pointer -Wall -Wextra -Wunused -pthread")
 else()
 	message(STATUS "Release build")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wunused -pthread")

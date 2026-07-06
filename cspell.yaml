@@ -14,12 +14,15 @@ words:
   - bugprone
   - buildconstant
   - channelmap
+  - cntfrq
+  - cntvct
   - COPYONLY
   - cppdbg
   - cppzmq
   - curdir
   - datatypebuffer
   - DCMAKE
+  - Debouncer
   - Digilynx
   - dummysink
   - endmacro
@@ -37,31 +40,40 @@ words:
   - keypair
   - latencybenchmark
   - levelcrossingdetector
+  - lfence
   - LIBCXX
   - libpython
   - libzmq
   - LLNL
+  - LTWH
+  - Maxs
   - multichannelfilter
   - nchannels
   - ncipollo
+  - ncolumns
   - neuralynx
   - Neuro
   - nlxreader
   - nlxrecord
   - nlxtestbench
+  - nocloudlog
+  - noscreenlog
   - npackets
   - nsamples
   - ontime
   - optvallen
   - outoforder
+  - pgrep
   - pixz
   - RCVTIMEO
   - rdtsc
+  - rdtscp
   - recvlen
   - REGISTERPROCESSOR
   - remixicon
   - rootproject
   - Selectability
+  - setcap
   - SNDMORE
   - stdev
   - stim

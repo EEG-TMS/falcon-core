@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:ffi/ffi.dart';
@@ -101,20 +102,6 @@ class ZMQFFi {
         throw Exception('zmq_setsockopt failed: $errStr');
       }
 
-      final readPtr = arena<Int32>();
-      final sizePtr = arena<Size>()..value = sizeOf<Int32>();
-
-      final readResult = _fns.zmq_getsockopt(
-        sock,
-        option,
-        readPtr.cast<Void>(),
-        sizePtr,
-      );
-      if (readResult != 0) {
-        final err = _fns.zmq_errno();
-        final errStr = _fns.zmq_strerror(err).toDartString();
-        throw Exception('zmq_getsockopt failed: $errStr');
-      }
       return result;
     });
   }
@@ -277,7 +264,12 @@ class ZMQFFi {
     }
 
     try {
+      var shouldSleep = false;
       while (true) {
+        if (shouldSleep) {
+          sleep(const Duration(milliseconds: 100));
+        }
+
         final n = _fns.zmq_msg_recv(msg, sock, flags);
         if (n >= 0) {
           final dataPtr = _fns.zmq_msg_data(msg);
@@ -289,7 +281,11 @@ class ZMQFFi {
         }
 
         final err = _fns.zmq_errno();
-        if (err == EINTR) continue;
+
+        shouldSleep = err == EINTR;
+        if (err == EINTR) {
+          continue;
+        }
         if (err == EAGAIN) return null;
         if (err == ETERM) throw Exception('Context terminated');
 

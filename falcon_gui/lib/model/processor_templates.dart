@@ -13,6 +13,11 @@ OneOfOption _createFormatOption() => OneOfOption(
   allowed: const ['none', 'full', 'compact', 'headeronly', 'streamheader'],
   displayName: 'Format',
 );
+OneOfOption _createSignalTypeOption() => OneOfOption(
+  value: 'square',
+  allowed: const ['sine', 'square', 'file'],
+  displayName: 'Signal Type',
+);
 
 final Map<String, Processor> allProcessorTemplates = () {
   // Register default colors
@@ -268,7 +273,7 @@ final _processorTemplatesUnsorted = {
       'use_power': BoolOption(value: true, displayName: 'Use Power'),
     },
     ports: const [
-      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'in_signal', type: 'TimeSeriesType<double>', isIn: true),
       Port(name: 'events', type: 'EventType', isIn: false),
       Port(name: 'statistics', type: 'TimeSeriesType<double>', isIn: false),
     ],
@@ -488,6 +493,25 @@ final _processorTemplatesUnsorted = {
       Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
+  'decimator': Processor(
+    id: 'decimator',
+    className: 'Decimator',
+    isTemplate: true,
+    options: const {
+      'downsample_factor': IntOption(
+        value: 1,
+        displayName: 'Downsample Factor',
+      ),
+      'buffer_size': IntOption(
+        value: 10,
+        displayName: 'Buffer size in samples',
+      ),
+    },
+    ports: const [
+      Port(name: 'input', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'output', type: 'TimeSeriesType<double>', isIn: false),
+    ],
+  ),
   'nlxreader': Processor(
     id: 'nlxreader',
     className: 'NlxReader',
@@ -497,22 +521,10 @@ final _processorTemplatesUnsorted = {
         value: '127.0.0.1',
         displayName: 'IP Address',
       ),
-      'port': const IntOption(
-        value: 5555,
-        displayName: 'Port Number',
-      ),
-      'npackets': const IntOption(
-        value: 0,
-        displayName: 'Total Data Packets',
-      ),
-      'batch_size': const IntOption(
-        value: 1,
-        displayName: 'Batch Size',
-      ),
-      'nchannels': const IntOption(
-        value: 1,
-        displayName: 'Number of Channels',
-      ),
+      'port': const IntOption(value: 5555, displayName: 'Port Number'),
+      'npackets': const IntOption(value: 0, displayName: 'Total Data Packets'),
+      'batch_size': const IntOption(value: 1, displayName: 'Batch Size'),
+      'nchannels': const IntOption(value: 1, displayName: 'Number of Channels'),
       'update_interval': const DoubleOption(
         value: 1,
         displayName: 'Update Interval (s)',
@@ -540,19 +552,15 @@ final _processorTemplatesUnsorted = {
     id: 'multichannelfilter',
     className: 'MultiChannelFilter',
     isTemplate: true,
-    options: {
-      'filter': YamlMapOption(
-        value: YamlMap.wrap(const {
-          'event_a': {
-            'high': [0, 1],
-          },
-        }),
-        displayName: 'Protocols',
+    options: const {
+      'filter_file': FileOption(
+        value: 'Pick a file',
+        displayName: 'Filter File',
       ),
     },
     ports: const [
-      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
-      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
+      Port(name: 'input', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'output', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
   'latencybenchmark': Processor(
@@ -560,8 +568,18 @@ final _processorTemplatesUnsorted = {
     className: 'LatencyBenchmark',
     isTemplate: true,
     options: const {},
+    ports: const [Port(name: 'data', type: 'AnyType', isIn: true)],
+  ),
+  'ripple_neuromed_reader': Processor(
+    id: 'ripple_neuromed_reader',
+    className: 'RippleNeuromedReader',
+    isTemplate: true,
+    options: const {
+      'elec_start': IntOption(value: 0, displayName: 'Start electrode'),
+      'elec_end': IntOption(value: 31, displayName: 'End electrode'),
+    },
     ports: const [
-      Port(name: 'data', type: 'AnyType', isIn: true),
+      Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
 
@@ -575,22 +593,47 @@ final _processorTemplatesUnsorted = {
       Port(name: 'tickle', type: 'bool', isIn: true, isState: true),
     ],
   ),
-  'testing1': Processor(
-    id: 'testing1',
-    className: 'testing1',
+  'signal_generator': Processor(
+    id: 'signal_generator',
+    className: 'SignalGenerator',
     isTemplate: true,
-    options: const {},
+    options: {
+      'n_channels': const IntOption(
+        value: 32,
+        displayName: 'Number of Channels',
+      ),
+      'sample_freq': const IntOption(
+        value: 1000,
+        displayName: 'Sample Frequency',
+      ),
+      'buffer_size': const IntOption(value: 1, displayName: 'Buffer Size'),
+      'signal_type': _createSignalTypeOption(),
+      'file_path': const FileOption(value: '', displayName: 'File Path'),
+    },
     ports: const [
-      Port(name: 'todo', type: 'AnyType', isIn: false),
+      Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
-  'testing2': Processor(
-    id: 'testing2',
-    className: 'testing2',
+
+  'signal_plotter': Processor(
+    id: 'signal_plotter',
+    className: 'SignalPlotter',
     isTemplate: true,
-    options: const {},
+    options: const {
+      'history_size': IntOption(value: 1000, displayName: 'Points on screen.'),
+    },
     ports: const [
-      Port(name: 'todo', type: 'AnyType', isIn: false),
+      Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: true),
     ],
+  ),
+  'websocket_sink': Processor(
+    id: 'websocket_sink',
+    className: 'WebsocketSink',
+    isTemplate: true,
+    options: const {
+      'port': IntOption(value: 5550, displayName: 'Port'),
+      'interval': IntOption(value: 1000, displayName: 'Interval (ms)'),
+    },
+    ports: const [Port(name: 'input', type: 'AnyType', isIn: true)],
   ),
 };
