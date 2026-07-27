@@ -39,9 +39,10 @@ include_directories("../lib")
 include_directories(".")
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/datatype_generated.h
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/datatype.fbs
+add_custom_command(
     COMMAND flatc --cpp ${CMAKE_CURRENT_SOURCE_DIR}/datatype.fbs
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/datatype_generated.h
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/datatype.fbs
 )
 
 add_custom_target(datatypebuffer DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/datatype_generated.h)
@@ -182,7 +183,7 @@ if (COMPILE_EXTENSIONS)
 
             string(REPLACE "-" "_" TARGET_NAME_CLEAN "${EXT_NAME}")
 
-            if (TARGET ${TARGET_NAME_CLEAN})
+            if (TARGET "${TARGET_NAME_CLEAN}")
                 add_dependencies(${TARGET_NAME_CLEAN} datatypebuffer)
                 list(APPEND PROCESSOR_LIBS ${TARGET_NAME_CLEAN})
             endif ()
