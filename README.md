@@ -42,4 +42,4 @@ If you encounter installation issues or runtime bugs, please open an issue in th
 - Relevant configuration files.
 
 # Developing new extensions
-To develop a new extension, you may open an issue here for architectural guidance. Generally, maintainers recommend hosting your extension in a standalone repository and then submitting a Pull Request to Falcon to include your documentation link in the main project registry.
+To develop a new extension, you may use the template extension in the `extensions/` folder.
