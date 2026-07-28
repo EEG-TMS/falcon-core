@@ -37,9 +37,9 @@ For comprehensive guides and API references, please visit the [Official Document
 # Contributing
 
 If you encounter installation issues or runtime bugs, please open an issue in the repository. When reporting a bug, it is highly recommended to include:
-A clear description of the problem or requested feature.
-The specific graph definition used.
-Relevant configuration files.
+- A clear description of the problem or requested feature.
+- The specific graph definition used.
+- Relevant configuration files.
 
 # Developing new extensions
 To develop a new extension, you may open an issue here for architectural guidance. Generally, maintainers recommend hosting your extension in a standalone repository and then submitting a Pull Request to Falcon to include your documentation link in the main project registry.
